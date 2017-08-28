@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Ecomerce.Models;
+using Ecomerce.Class;
 
 namespace Ecomerce.Controllers
 {
@@ -39,7 +40,8 @@ namespace Ecomerce.Controllers
         // GET: Cities/Create
         public ActionResult Create()
         {
-            ViewBag.DepartmentId = new SelectList(db.Departments, "DepartmentId", "Name");
+           
+            ViewBag.DepartmentId = new SelectList(CombosHelper.GetDepartments(), "DepartmentId", "Name");
             return View();
         }
 
@@ -53,11 +55,28 @@ namespace Ecomerce.Controllers
             if (ModelState.IsValid)
             {
                 db.Cities.Add(city);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                try
+                {
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                catch (Exception ex)
+                {
+                    if (ex.InnerException != null && ex.InnerException.InnerException != null && ex.InnerException.InnerException.Message.Contains("_Index"))
+
+                    {
+                        ModelState.AddModelError(string.Empty, "There are a record with the same value");
+
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, ex.Message);
+                    }
+                    
+                }
             }
 
-            ViewBag.DepartmentId = new SelectList(db.Departments.OrderBy(d=>d.Name), "DepartmentId", "Name", city.DepartmentId);
+            ViewBag.DepartmentId = new SelectList(CombosHelper.GetDepartments(), "DepartmentId", "Name", city.DepartmentId);
             return View(city);
         }
 
@@ -73,7 +92,7 @@ namespace Ecomerce.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.DepartmentId = new SelectList(db.Departments.OrderBy(d=>d.Name), "DepartmentId", "Name", city.DepartmentId);
+            ViewBag.DepartmentId = new SelectList(CombosHelper.GetDepartments(), "DepartmentId", "Name", city.DepartmentId);
             return View(city);
         }
 
@@ -87,10 +106,26 @@ namespace Ecomerce.Controllers
             if (ModelState.IsValid)
             {
                 db.Entry(city).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                try
+                {
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                catch (Exception ex)
+                {
+                    if (ex.InnerException != null && ex.InnerException.InnerException != null && ex.InnerException.InnerException.Message.Contains("_Index"))
+
+                    {
+                        ModelState.AddModelError(string.Empty, "There are a record with the same value");
+
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, ex.Message);
+                    }
+                }
             }
-            ViewBag.DepartmentId = new SelectList(db.Departments.OrderBy(d=>d.Name), "DepartmentId", "Name", city.DepartmentId);
+            ViewBag.DepartmentId = new SelectList(CombosHelper.GetDepartments(), "DepartmentId", "Name", city.DepartmentId);
             return View(city);
         }
 

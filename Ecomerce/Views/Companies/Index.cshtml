@@ -1,0 +1,68 @@
+﻿@model IEnumerable<Ecomerce.Models.Company>
+
+@{
+    ViewBag.Title = "Companies";
+}
+
+<h2>Companies</h2>
+
+<p>
+   
+    <a class="btn btn-primary" href="/Companies/Create">Create New<span class="glyphicon-plus"></span></a>
+   
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.City.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Department.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Phone)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Address)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Logo)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.City.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Department.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Phone)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Address)
+        </td>
+        <td>
+            @if (!string.IsNullOrEmpty(item.Logo))
+            {
+                <img src="@Url.Content(item.Logo)" alt="Image" style="width:100px;height:100px;max-width: 100%; height: auto;" />
+            }
+        </td>
+          <td>
+            <a class="btn btn-warning" href="/Companies/Edit/@item.CompanyId">Edit<span class="glyphicon glyphicon-edit"></span></a>
+            <a class="btn btn-info" href="/Companies/Details/@item.CompanyId">Details<span class="glyphicon glyphicon-exclamation-sign"></span></a>
+            <a class="btn btn-danger" href="/Companies/Delete/@item.CompanyId">Delete<span class="glyphicon glyphicon-trash"></span></a>
+        </td>
+    </tr>
+}
+
+</table>

@@ -7,52 +7,130 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Ecomerce.Models;
+using Ecomerce.Class;
 
 namespace Ecomerce.Controllers
 {
-    public class DepartmentsController : Controller
+    public class CompaniesController : Controller
     {
         private EcomerceDataContext db = new EcomerceDataContext();
 
-        // GET: Departments
+        // GET: Companies
         public ActionResult Index()
         {
-            return View(db.Departments.ToList());
+            var companies = db.Companies.Include(c => c.City).Include(c => c.Department);
+            return View(companies.ToList());
         }
 
-        // GET: Departments/Details/5
+        // GET: Companies/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Department department = db.Departments.Find(id);
-            if (department == null)
+            Company company = db.Companies.Find(id);
+            if (company == null)
             {
                 return HttpNotFound();
             }
-            return View(department);
+            return View(company);
         }
 
-        // GET: Departments/Create
+        // GET: Companies/Create
         public ActionResult Create()
         {
+            ViewBag.CityId = new SelectList(CombosHelper.GetCities(), "CityId", "Name");
+            ViewBag.DepartmentId = new SelectList(CombosHelper.GetDepartments(), "DepartmentId", "Name");
             return View();
         }
 
-        // POST: Departments/Create
+        // POST: Companies/Create
         // Para protegerse de ataques de publicación excesiva, habilite las propiedades específicas a las que desea enlazarse. Para obtener 
         // más información vea http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "DepartmentId,Name")] Department department)
+        public ActionResult Create( Company company)
         {
             if (ModelState.IsValid)
             {
-                db.Departments.Add(department);
+                var pic = string.Empty;
+                var folder = "~/Content/Logos";
+
+                if (company.LogoFile != null)
+                {
+                    pic = FilesHelper.UploadPhoto(company.LogoFile, folder);
+                    pic = string.Format("{0}/{1}", folder, pic);
+                }
+                company.Logo = pic;
+
+                db.Companies.Add(company);
+
                 try
                 {
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                catch (Exception ex)
+                {
+
+                    if (ex.InnerException != null && ex.InnerException.InnerException != null && ex.InnerException.InnerException.Message.Contains("_Index"))
+
+                    {
+                        ModelState.AddModelError(string.Empty, "There are a record with the same value");
+
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, ex.Message);
+                    }
+                }
+            }
+
+            ViewBag.CityId = new SelectList(CombosHelper.GetCities(), "CityId", "Name", company.CityId);
+            ViewBag.DepartmentId = new SelectList(CombosHelper.GetDepartments(), "DepartmentId", "Name", company.DepartmentId);
+            return View(company);
+        }
+
+        // GET: Companies/Edit/5
+        public ActionResult Edit(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Company company = db.Companies.Find(id);
+            if (company == null)
+            {
+                return HttpNotFound();
+            }
+            ViewBag.CityId = new SelectList(CombosHelper.GetCities(), "CityId", "Name", company.CityId);
+            ViewBag.DepartmentId = new SelectList(CombosHelper.GetDepartments(), "DepartmentId", "Name", company.DepartmentId);
+            return View(company);
+        }
+
+        // POST: Companies/Edit/5
+        // Para protegerse de ataques de publicación excesiva, habilite las propiedades específicas a las que desea enlazarse. Para obtener 
+        // más información vea http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit( Company company)
+        {
+            if (ModelState.IsValid)
+            {
+                var pic = company.Logo;
+                var folder = "~/Content/Logos";
+
+                if (company.LogoFile != null)
+                {
+                    pic = FilesHelper.UploadPhoto(company.LogoFile, folder);
+                    pic = string.Format("{0}/{1}", folder, pic);
+                    company.Logo = pic;
+                }
+                try
+                {
+
+                    db.Entry(company).State = EntityState.Modified;
                     db.SaveChanges();
                     return RedirectToAction("Index");
                 }
@@ -65,104 +143,50 @@ namespace Ecomerce.Controllers
 
                     }
                     else
-                    { ModelState.AddModelError(string.Empty, ex.Message);
-                    }
-                   
-                  
-                }
-            }
-
-            return View(department);
-        }
-
-        // GET: Departments/Edit/5
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Department department = db.Departments.Find(id);
-            if (department == null)
-            {
-                return HttpNotFound();
-            }
-            return View(department);
-        }
-
-        // POST: Departments/Edit/5
-        // Para protegerse de ataques de publicación excesiva, habilite las propiedades específicas a las que desea enlazarse. Para obtener 
-        // más información vea http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "DepartmentId,Name")] Department department)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(department).State = EntityState.Modified;
-                try
-                {
-                    db.SaveChanges();
-                    return RedirectToAction("Index");
-                }
-                catch ( Exception ex)
-                {
-                    if (ex.InnerException != null && ex.InnerException.InnerException != null && ex.InnerException.InnerException.Message.Contains("_Index"))
-
-                    {
-                        ModelState.AddModelError(string.Empty, "There are a record with the same value");
-
-                    }
-                    else
                     {
                         ModelState.AddModelError(string.Empty, ex.Message);
                     }
-
                 }
             }
-            return View(department);
+            ViewBag.CityId = new SelectList(CombosHelper.GetCities(), "CityId", "Name", company.CityId);
+            ViewBag.DepartmentId = new SelectList(CombosHelper.GetDepartments(), "DepartmentId", "Name", company.DepartmentId);
+            return View(company);
         }
 
-        // GET: Departments/Delete/5
+        // GET: Companies/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Department department = db.Departments.Find(id);
-            if (department == null)
+            Company company = db.Companies.Find(id);
+            if (company == null)
             {
                 return HttpNotFound();
             }
-            return View(department);
+            return View(company);
         }
 
-        // POST: Departments/Delete/5
+        // POST: Companies/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Department department = db.Departments.Find(id);
-            db.Departments.Remove(department);
-            try
-            {
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            catch (Exception ex)
-            {
-                if (ex.InnerException != null && ex.InnerException.InnerException != null && ex.InnerException.InnerException.Message.Contains("REFERENCE"))
-
-                {
-                    ModelState.AddModelError(string.Empty, "The record can't be delete because it has related records");
-
-                }
-                else { ModelState.AddModelError(string.Empty,ex.Message); }
-                   
-            }
-            return View(department);
+            Company company = db.Companies.Find(id);
+            db.Companies.Remove(company);
+            db.SaveChanges();
+            return RedirectToAction("Index");
         }
+
+        public JsonResult GetCities(int departmentId)
+        {
+            db.Configuration.ProxyCreationEnabled = false;
+            var cities = db.Cities.Where(m => m.DepartmentId == departmentId);
+            return Json(cities);
+        }
+
+
 
         protected override void Dispose(bool disposing)
         {
