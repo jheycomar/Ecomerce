@@ -59,7 +59,8 @@ namespace Ecomerce.Controllers
 
                 if (company.LogoFile != null)
                 {
-                    pic = FilesHelper.UploadPhoto(company.LogoFile, folder);
+                    pic = FilesHelper.UploadPhotoUser("Companies", "Logo");
+                    pic = FilesHelper.UploadPhoto(company.LogoFile,pic, folder);
                     pic = string.Format("{0}/{1}", folder, pic);
                 }
                 company.Logo = pic;
@@ -123,7 +124,8 @@ namespace Ecomerce.Controllers
 
                 if (company.LogoFile != null)
                 {
-                    pic = FilesHelper.UploadPhoto(company.LogoFile, folder);
+                    pic = FilesHelper.UploadPhotoUser("Companies", "Logo");
+                    pic = FilesHelper.UploadPhoto(company.LogoFile,pic, folder);
                     pic = string.Format("{0}/{1}", folder, pic);
                     company.Logo = pic;
                 }

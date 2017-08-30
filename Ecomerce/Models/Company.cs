@@ -9,15 +9,18 @@ namespace Ecomerce.Models
 {
     public class Company
     {
+        
         [Key]
         public int CompanyId { get; set; }
 
+        [DataType(DataType.Text)]
         [Required(ErrorMessage = "The field {0} is required")]
         [StringLength(50, ErrorMessage = "The field {0} can contain maximun {1} and minimum {2} characters", MinimumLength = 3)]
         [Display(Name = "Company")]
         [Index("Company_Name_Index", IsUnique = true)]
         public string Name { get; set; }
 
+        
         [Required(ErrorMessage = "The field {0} is required")]
         [StringLength(20, ErrorMessage = "The field {0} can contain maximun {1} and minimum {2} characters", MinimumLength = 3)]
         [DataType(DataType.PhoneNumber)]        
@@ -28,6 +31,7 @@ namespace Ecomerce.Models
         
         public string Address { get; set; }
 
+       
         [DataType(DataType.ImageUrl)]
         public string Logo { get; set; }
 
@@ -45,5 +49,7 @@ namespace Ecomerce.Models
         public virtual Department Department { get; set; }
 
         public virtual City City { get; set; }
+
+        public virtual ICollection<User> Users { get; set; }
     }
 }

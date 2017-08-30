@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - Mi aplicación ASP.NET</title>
+    <title>@ViewBag.Title - Femco</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 
@@ -28,6 +28,7 @@
                     <li>@Html.ActionLink("Departments", "Index", "Departments")</li>
                     <li>@Html.ActionLink("Cities", "Index", "Cities")</li>
                     <li>@Html.ActionLink("Companies", "Index", "Companies")</li>
+                    <li>@Html.ActionLink("Users", "Index", "Users")</li>
                 </ul>
                 @Html.Partial("_LoginPartial")
             </div>
@@ -37,7 +38,7 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - Mi aplicación ASP.NET</p>
+            <p>&copy; @DateTime.Now.Year - Mi aplicación Femco</p>
         </footer>
     </div>
 

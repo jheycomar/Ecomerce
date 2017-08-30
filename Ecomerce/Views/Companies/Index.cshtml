@@ -11,7 +11,7 @@
     <a class="btn btn-primary" href="/Companies/Create">Create New<span class="glyphicon-plus"></span></a>
    
 </p>
-<table class="table">
+<table class="table table-striped table-bordered table-hover">
     <tr>
         <th>
             @Html.DisplayNameFor(model => model.City.Name)
@@ -54,7 +54,7 @@
         <td>
             @if (!string.IsNullOrEmpty(item.Logo))
             {
-                <img src="@Url.Content(item.Logo)" alt="Image" style="width:100px;height:100px;max-width: 100%; height: auto;" />
+                <img src="@Url.Content(item.Logo)" alt="Image" style="width:150px;height:100px;max-width: 100%; height: auto;" />
             }
         </td>
           <td>
