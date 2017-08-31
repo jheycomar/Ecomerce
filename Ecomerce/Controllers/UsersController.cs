@@ -71,6 +71,7 @@ namespace Ecomerce.Controllers
                 {
                     db.Users.Add(user);
                     db.SaveChanges();
+                    UsersHelper.CreateUserASP(user.UserName, "User");
                     return RedirectToAction("Index");
                 }
                 catch (Exception ex)
