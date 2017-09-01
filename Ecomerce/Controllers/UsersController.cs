@@ -77,10 +77,8 @@ namespace Ecomerce.Controllers
                 catch (Exception ex)
                 {
                     if (ex.InnerException != null && ex.InnerException.InnerException != null && ex.InnerException.InnerException.Message.Contains("_Index"))
-
                     {
-                        ModelState.AddModelError(string.Empty, "There are a record with the same value");
-
+                      ModelState.AddModelError(string.Empty, "There are a record with the same value");
                     }
                     else
                     {
