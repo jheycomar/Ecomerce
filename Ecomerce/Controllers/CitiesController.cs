@@ -11,6 +11,7 @@ using Ecomerce.Class;
 
 namespace Ecomerce.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class CitiesController : Controller
     {
         private EcomerceDataContext db = new EcomerceDataContext();

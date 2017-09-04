@@ -11,6 +11,7 @@ using Ecomerce.Class;
 
 namespace Ecomerce.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class UsersController : Controller
     {
         private EcomerceDataContext db = new EcomerceDataContext();
@@ -58,7 +59,7 @@ namespace Ecomerce.Controllers
 
                 if (user.PhotoFile != null)
                 {
-                    pic= FilesHelper.UploadPhotoUser("Users", "Photo");
+                    pic= FilesHelper.GetNamePhoto("Users", "Photo");
                     if (pic != null)
                     {
                         pic = FilesHelper.UploadPhoto(user.PhotoFile, pic, folder);
@@ -112,15 +113,34 @@ namespace Ecomerce.Controllers
             return View(user);
         }
 
-        // POST: Users/Edit/5
-        // Para protegerse de ataques de publicación excesiva, habilite las propiedades específicas a las que desea enlazarse. Para obtener 
-        // más información vea http://go.microsoft.com/fwlink/?LinkId=317598.
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "UserId,UserName,FirstName,LastName,Phone,Address,Photo,DepartmentId,CityId,CompanyId")] User user)
+        public ActionResult Edit(User user)
         {
             if (ModelState.IsValid)
             {
+                var pic = user.Photo;
+                var folder = "~/Content/Users";
+
+                if (user.PhotoFile != null)
+                {
+                    pic = pic.Substring(16);
+                  
+                    if (pic != null)
+                    {
+                        pic = FilesHelper.UploadPhoto(user.PhotoFile, pic, folder);
+                        pic = string.Format("{0}/{1}", folder, pic);
+                    }
+                }
+                user.Photo = pic;
+                var db2 = new EcomerceDataContext();
+                var currenrUser = db2.Users.Find(user.UserId);
+                if (currenrUser.UserName != user.UserName)
+                {
+                    UsersHelper.UpdateUserName(currenrUser.UserName, user.UserName);
+                }
+                db2.Dispose();
                 db.Entry(user).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -154,6 +174,7 @@ namespace Ecomerce.Controllers
             User user = db.Users.Find(id);
             db.Users.Remove(user);
             db.SaveChanges();
+            UsersHelper.DeleteUser(user.UserName);
             return RedirectToAction("Index");
         }
 

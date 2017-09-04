@@ -10,6 +10,7 @@ using Ecomerce.Models;
 
 namespace Ecomerce.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class DepartmentsController : Controller
     {
         private EcomerceDataContext db = new EcomerceDataContext();

@@ -29,7 +29,7 @@ namespace Ecomerce.Class
             return name;
         }
 
-        public static string UploadPhotoUser(string tabla, string campo)
+        public static string GetNamePhoto(string tabla, string campo)
         {
             string Ruta = string.Empty;
             string pic = "WA";

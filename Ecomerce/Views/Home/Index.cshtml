@@ -1,11 +1,17 @@
-﻿@{
+﻿@model Ecomerce.Models.User
+@{
     ViewBag.Title = "Home Page";
 }
 
 <div class="jumbotron">
-    <h1>FEMCO SRL</h1>
+    <h1>E-Commerce</h1>
+  
     <p class="lead">Femco es una empresa de desarrollo de Industria electro mecanica  100% boliviana. Ubicada en av.Villazon km 6.5 Camino a sacaba - cochabamba</p>
     <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+    @if (Model != null && !string.IsNullOrEmpty(Model.Company.Logo))
+    {
+        <img src="@Url.Content(Model.Company.Logo)" alt="Image" style="width:150px;height:100px;max-width: 100%; height: auto;" />
+    }
 </div>
 
 <div class="row">

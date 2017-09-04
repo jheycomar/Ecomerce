@@ -11,6 +11,7 @@ using Ecomerce.Class;
 
 namespace Ecomerce.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class CompaniesController : Controller
     {
         private EcomerceDataContext db = new EcomerceDataContext();
@@ -59,7 +60,7 @@ namespace Ecomerce.Controllers
 
                 if (company.LogoFile != null)
                 {
-                    pic = FilesHelper.UploadPhotoUser("Companies", "Logo");
+                    pic = FilesHelper.GetNamePhoto("Companies", "Logo");
                     pic = FilesHelper.UploadPhoto(company.LogoFile,pic, folder);
                     pic = string.Format("{0}/{1}", folder, pic);
                 }
@@ -124,7 +125,7 @@ namespace Ecomerce.Controllers
 
                 if (company.LogoFile != null)
                 {
-                    pic = FilesHelper.UploadPhotoUser("Companies", "Logo");
+                    pic = pic.Substring(16);
                     pic = FilesHelper.UploadPhoto(company.LogoFile,pic, folder);
                     pic = string.Format("{0}/{1}", folder, pic);
                     company.Logo = pic;

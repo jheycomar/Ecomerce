@@ -37,10 +37,12 @@ namespace Ecomerce.Models
 
         [Required(ErrorMessage = "The field {0} is required")]
         [Range(1, Double.MaxValue, ErrorMessage = "You must select a {0}")]
+        [Display(Name = "Department")]
         public int DepartmentId { get; set; }
 
         [Required(ErrorMessage = "The field {0} is required")]
         [Range(1, Double.MaxValue, ErrorMessage = "You must select a {0}")]
+        [Display(Name = "City")]
         public int CityId { get; set; }
 
         [NotMapped]
@@ -51,5 +53,7 @@ namespace Ecomerce.Models
         public virtual City City { get; set; }
 
         public virtual ICollection<User> Users { get; set; }
+
+        public virtual ICollection<Category> Categories { get; set; }
     }
 }
