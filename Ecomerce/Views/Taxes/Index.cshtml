@@ -1,0 +1,41 @@
+﻿@model IEnumerable<Ecomerce.Models.Tax>
+
+@{
+    ViewBag.Title = "Taxes";
+}
+
+<h2>Taxes</h2>
+
+<p>
+     <a class="btn btn-primary" href="/Taxes/Create">Create New<span class="glyphicon-plus"></span></a>
+</p>
+<table class="table">
+    <tr>
+       
+        <th>
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Rate)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+       
+        <td>
+            @Html.DisplayFor(modelItem => item.Description)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Rate)
+        </td>
+        <td>
+            <a class="btn btn-warning" href="/Taxes/Edit/@item.TaxId">Edit<span class="glyphicon glyphicon-edit"></span></a>
+            <a class="btn btn-info" href="/Taxes/Details/@item.TaxId">Details<span class="glyphicon glyphicon-exclamation-sign"></span></a>
+            <a class="btn btn-danger" href="/Taxes/Delete/@item.TaxId">Delete<span class="glyphicon glyphicon-trash"></span></a>
+        </td>
+    </tr>
+}
+
+</table>

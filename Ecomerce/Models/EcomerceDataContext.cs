@@ -28,5 +28,9 @@ namespace Ecomerce.Models
         public System.Data.Entity.DbSet<Ecomerce.Models.User> Users { get; set; }
 
         public System.Data.Entity.DbSet<Ecomerce.Models.Category> Categories { get; set; }
+
+        public System.Data.Entity.DbSet<Ecomerce.Models.Tax> Taxes { get; set; }
+
+        public System.Data.Entity.DbSet<Ecomerce.Models.Product> Products { get; set; }
     }
 }
