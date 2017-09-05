@@ -32,5 +32,7 @@ namespace Ecomerce.Models
         public System.Data.Entity.DbSet<Ecomerce.Models.Tax> Taxes { get; set; }
 
         public System.Data.Entity.DbSet<Ecomerce.Models.Product> Products { get; set; }
+
+        public System.Data.Entity.DbSet<Ecomerce.Models.Warehouse> Warehouses { get; set; }
     }
 }

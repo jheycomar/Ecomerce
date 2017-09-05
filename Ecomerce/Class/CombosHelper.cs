@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Collections;
 
 namespace Ecomerce.Class
 {
@@ -39,6 +40,24 @@ namespace Ecomerce.Class
         public void Dispose()
         {
             db.Dispose();
+        }
+
+        public static List<Category> GetCategories(int companyId)
+        {
+            var categories = db.Categories.Where(c=>c.CompanyId==companyId).ToList();
+
+            categories.Add(new Category { CategoryId = 0, Description = "[Select a Category...]" });
+
+            return categories.OrderBy(d => d.Description).ToList();
+        }
+
+        public static List<Tax> GetTaxes(int companyId)
+        {
+            var taxes = db.Taxes.Where(c => c.CompanyId == companyId).ToList();
+
+            taxes.Add(new Tax { TaxId = 0, Description = "[Select a Tax...]" });
+
+            return taxes.OrderBy(d => d.Description).ToList();
         }
     }
 }

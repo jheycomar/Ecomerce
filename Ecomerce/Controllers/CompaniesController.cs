@@ -55,38 +55,56 @@ namespace Ecomerce.Controllers
         {
             if (ModelState.IsValid)
             {
-                var pic = string.Empty;
-                var folder = "~/Content/Logos";
-
-                if (company.LogoFile != null)
-                {
-                    pic = FilesHelper.GetNamePhoto("Companies", "Logo");
-                    pic = FilesHelper.UploadPhoto(company.LogoFile,pic, folder);
-                    pic = string.Format("{0}/{1}", folder, pic);
-                }
-                company.Logo = pic;
-
-                db.Companies.Add(company);
 
                 try
                 {
+                    db.Companies.Add(company);
                     db.SaveChanges();
-                    return RedirectToAction("Index");
                 }
                 catch (Exception ex)
                 {
-
                     if (ex.InnerException != null && ex.InnerException.InnerException != null && ex.InnerException.InnerException.Message.Contains("_Index"))
-
                     {
                         ModelState.AddModelError(string.Empty, "There are a record with the same value");
-
                     }
                     else
                     {
                         ModelState.AddModelError(string.Empty, ex.Message);
                     }
                 }
+
+                if (company.LogoFile != null)
+                {
+
+                    var folder = "~/Content/Logos";
+                    var pic = FilesHelper.GetNamePhoto(company.CompanyId);
+                    if (pic != null)
+                    {
+                        pic = FilesHelper.UploadPhoto(company.LogoFile, pic, folder);
+                        company.Logo = string.Format("{0}/{1}", folder, pic);
+
+                        #region guardar
+                        try
+                        {
+                            db.Entry(company).State = EntityState.Modified;
+                            db.SaveChanges();
+                        }
+                        catch (Exception ex)
+                        {
+                            if (ex.InnerException != null && ex.InnerException.InnerException != null && ex.InnerException.InnerException.Message.Contains("_Index"))
+                            {
+                                ModelState.AddModelError(string.Empty, "There are a record with the same value");
+                            }
+                            else
+                            {
+                                ModelState.AddModelError(string.Empty, ex.Message);
+                            }
+                        }
+                        #endregion
+                    }
+                }
+                return RedirectToAction("Index");
+                
             }
 
             ViewBag.CityId = new SelectList(CombosHelper.GetCities(), "CityId", "Name", company.CityId);

@@ -7,36 +7,37 @@ using System.Web;
 
 namespace Ecomerce.Models
 {
-    public class Company
+    public class Warehouse
     {
-        
+
         [Key]
+        public int WarehouseId { get; set; }
+
+        [Required(ErrorMessage = "The field {0} is required")]
+        [Range(1, Double.MaxValue, ErrorMessage = "You must select a {0}")]
+        [Index("Warehouse_CompanyId_Name_Index", 1, IsUnique = true)]
+        [Display(Name = "Company")]
         public int CompanyId { get; set; }
 
-        [DataType(DataType.Text)]
+
         [Required(ErrorMessage = "The field {0} is required")]
         [StringLength(50, ErrorMessage = "The field {0} can contain maximun {1} and minimum {2} characters", MinimumLength = 3)]
-        [Display(Name = "Company")]
-        [Index("Company_Name_Index", IsUnique = true)]
+        [Display(Name = "Warehouse")]
+        [Index("Warehouse_CompanyId_Name_Index", 2,IsUnique = true)]
+        [DataType(DataType.EmailAddress)]
         public string Name { get; set; }
 
         
+
         [Required(ErrorMessage = "The field {0} is required")]
         [StringLength(20, ErrorMessage = "The field {0} can contain maximun {1} and minimum {2} characters", MinimumLength = 3)]
-        [DataType(DataType.PhoneNumber)]        
+        [DataType(DataType.PhoneNumber)]
         public string Phone { get; set; }
 
         [Required(ErrorMessage = "The field {0} is required")]
         [StringLength(100, ErrorMessage = "The field {0} can contain maximun {1} and minimum {2} characters", MinimumLength = 3)]
-        
         public string Address { get; set; }
-
-       
-        [DataType(DataType.ImageUrl)]
-        public string Logo { get; set; }
-        [NotMapped]
-        public HttpPostedFileBase LogoFile { get; set; }
-
+        
         [Required(ErrorMessage = "The field {0} is required")]
         [Range(1, Double.MaxValue, ErrorMessage = "You must select a {0}")]
         [Display(Name = "Department")]
@@ -51,12 +52,8 @@ namespace Ecomerce.Models
 
         public virtual City City { get; set; }
 
-        public virtual ICollection<User> Users { get; set; }
+        public virtual Company Company { get; set; }
 
-        public virtual ICollection<Category> Categories { get; set; }
 
-        public virtual ICollection<Tax> Taxes { get; set; }
-        public virtual ICollection<Product> Products { get; set; }
-        public virtual ICollection<Warehouse> Warehouses { get; set; }
     }
 }
