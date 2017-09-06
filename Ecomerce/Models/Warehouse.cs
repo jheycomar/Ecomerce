@@ -24,7 +24,7 @@ namespace Ecomerce.Models
         [StringLength(50, ErrorMessage = "The field {0} can contain maximun {1} and minimum {2} characters", MinimumLength = 3)]
         [Display(Name = "Warehouse")]
         [Index("Warehouse_CompanyId_Name_Index", 2,IsUnique = true)]
-        [DataType(DataType.EmailAddress)]
+       
         public string Name { get; set; }
 
         
