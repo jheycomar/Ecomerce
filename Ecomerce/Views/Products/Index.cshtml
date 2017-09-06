@@ -31,7 +31,7 @@
             @Html.DisplayNameFor(model => model.Image)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Remarks)
+            @Html.DisplayNameFor(model => model.Stock)
         </th>
         <th></th>
     </tr>
@@ -60,8 +60,8 @@
                 <img src="@Url.Content(item.Image)" alt="Image" style="width:150px;height:100px;max-width: 100%; height: auto;" />
             }
         </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Remarks)
+        <td align="right">
+            @Html.DisplayFor(modelItem => item.Stock)
         </td>
         <td>
             <a class="btn btn-warning" href="/Products/Edit/@item.ProductId">Edit<span class="glyphicon glyphicon-edit"></span></a>
