@@ -1,0 +1,35 @@
+﻿@model IEnumerable<Ecomerce.Models.State>
+
+@{
+    ViewBag.Title = "States";
+}
+
+<h2>States</h2>
+
+<p>
+    
+    <a class="btn btn-primary" href="/States/Create">Create New<span class="glyphicon-plus"></span></a>
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Description)
+        </td>
+        <td>
+
+            <a class="btn btn-warning" href="/States/Edit/@item.StateId">Edit<span class="glyphicon glyphicon-edit"></span></a>
+            <a class="btn btn-info" href="/States/Details/@item.StateId">Details<span class="glyphicon glyphicon-exclamation-sign"></span></a>
+            <a class="btn btn-danger" href="/States/Delete/@item.StateId">Delete<span class="glyphicon glyphicon-trash"></span></a>
+        </td>
+    </tr>
+}
+
+</table>

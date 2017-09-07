@@ -1,0 +1,51 @@
+﻿@model IEnumerable<Ecomerce.Models.Order>
+
+@{
+    ViewBag.Title = "Orders";
+}
+
+<h2>Orders</h2>
+
+<p>
+    <a class="btn btn-primary" href="/Orders/Create">Create New<span class="glyphicon-plus"></span></a>
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Customer.UserName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.State.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Date)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Remarks)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Customer.UserName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.State.Description)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Date)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Remarks)
+        </td>
+        <td>
+            <a class="btn btn-warning" href="/Orders/Edit/@item.OrderId">Edit<span class="glyphicon glyphicon-edit"></span></a>
+            <a class="btn btn-info" href="/Orders/Details/@item.OrderId">Details<span class="glyphicon glyphicon-exclamation-sign"></span></a>
+            <a class="btn btn-danger" href="/Orders/Delete/@item.OrderId">Delete<span class="glyphicon glyphicon-trash"></span></a>
+        </td>
+    </tr>
+}
+
+</table>

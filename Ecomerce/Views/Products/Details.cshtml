@@ -95,7 +95,7 @@
         <h4>Inventori</h4>
         <hr />
         @if(Model.Inventories.Count==0)
-        { <h5>No inventories registtred yet</h5>}
+        { <h5>No inventories registred yet</h5>}
         else
         {
             <table class="table table-striped table-bordered table-hover">
@@ -119,7 +119,15 @@
                         </td>
                     </tr>
                 }
-
+                <tr > 
+                    <td>
+                        <strong>Total</strong>
+                    </td>
+                    <td align="right">
+                        <strong> @Html.DisplayFor(Model => Model.Stock)</strong>
+                    </td>
+                </tr>
+                
             </table>
 
         }
