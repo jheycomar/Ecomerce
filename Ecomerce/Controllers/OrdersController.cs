@@ -16,40 +16,65 @@ namespace Ecomerce.Controllers
     {
         private EcomerceDataContext db = new EcomerceDataContext();
 
+        public ActionResult DeleteProduct(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var orderDetailTmp = db.OrderDetailTmps.Where(odt => odt.UserName == User.Identity.Name && odt.ProductId == id).FirstOrDefault();
+            if (orderDetailTmp == null)
+            {
+                return HttpNotFound();
+            }
+            db.OrderDetailTmps.Remove(orderDetailTmp);
+            db.SaveChanges();
+            return RedirectToAction("Create");
+        }
         public ActionResult AddProduct()
         {
             var user = db.Users.Where(u => u.UserName == User.Identity.Name).FirstOrDefault();
-            ViewBag.ProductId = new SelectList(CombosHelper.GetProducts(user.CompanyId), "ProductId", "Description");
-            return View();
+            ViewBag.ProductId = new SelectList(CombosHelper.GetProducts(user.CompanyId, false), "ProductId", "Description");
+            return PartialView();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult AddProduct(AddProductView view)
         {
-           
-
+            var user = db.Users.Where(u => u.UserName == User.Identity.Name).FirstOrDefault();
             if (ModelState.IsValid)
             {
-                var product = db.Products.Find(view.ProductId);
-                var orderDetailTmp = new OrderDetailTmp
-                { Description=product.Description,
-                Price=product.Price,
-                ProductId=product.ProductId,
-                Quantity=view.Quantity,
-                TaxRate=product.Tax.Rate,
-                UserName=User.Identity.Name                
-                };
+                var orderDetailTmp = db.OrderDetailTmps.Where(odt=>odt.UserName==User.Identity.Name && odt.ProductId==view.ProductId).FirstOrDefault();
+                if (orderDetailTmp == null)
+                {
+                    var product = db.Products.Find(view.ProductId);
+                    orderDetailTmp = new OrderDetailTmp
+                    {
+                        Description = product.Description,
+                        Price = product.Price,
+                        ProductId = product.ProductId,
+                        Quantity = view.Quantity,
+                        TaxRate = product.Tax.Rate,
+                        UserName = User.Identity.Name
+                    };
 
-                db.OrderDetailTmps.Add(orderDetailTmp);
+                    db.OrderDetailTmps.Add(orderDetailTmp);
+                }
+                else
+                {
+                    orderDetailTmp.Quantity += view.Quantity;
+                    db.Entry(orderDetailTmp).State=EntityState.Modified;
+
+                }
                 db.SaveChanges();
 
                 return RedirectToAction("Create");
             }
 
-            var user = db.Users.Where(u => u.UserName == User.Identity.Name).FirstOrDefault();
+          
             ViewBag.ProductId = new SelectList(CombosHelper.GetProducts(user.CompanyId), "ProductId", "Description");
-            return View(view);
+            return PartialView(view);
 
         }
 
@@ -92,18 +117,25 @@ namespace Ecomerce.Controllers
         
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Order order)
+        public ActionResult Create(NewOrderView view)
         {
             if (ModelState.IsValid)
             {
-                db.Orders.Add(order);
-                db.SaveChanges();
+                var response = MovementsHelper.NewOrder(view, User.Identity.Name);
+                if (response.Succeded)
+                {
+                    return RedirectToAction("Index");
+                }
+                ModelState.AddModelError(string.Empty, response.Message);
+
+               
                 return RedirectToAction("Index");
             }
 
-            var user = db.Users.Where(u => u.UserName == User.Identity.Name).FirstOrDefault();
+            var user = db.Users.Where(u => u.UserName == User.Identity.Name).FirstOrDefault();         
             ViewBag.CustomerId = new SelectList(CombosHelper.GetCustomers(user.CompanyId), "CustomerId", "FullName");
-            return View(order);
+            view.Details = db.OrderDetailTmps.Where(odt => odt.UserName == User.Identity.Name).ToList(); 
+            return View(view);
         }
 
         // GET: Orders/Edit/5

@@ -41,7 +41,7 @@ namespace Ecomerce.Controllers
         // GET: Users/Create
         public ActionResult Create()
         {
-            ViewBag.CityId = new SelectList(CombosHelper.GetCities(), "CityId", "Name");
+            ViewBag.CityId = new SelectList(CombosHelper.GetCities(0), "CityId", "Name");
             ViewBag.CompanyId = new SelectList(CombosHelper.GetCompanies(), "CompanyId", "Name");
             ViewBag.DepartmentId = new SelectList(CombosHelper.GetDepartments(), "DepartmentId", "Name");
             return View();
@@ -54,30 +54,17 @@ namespace Ecomerce.Controllers
         {
             if (ModelState.IsValid)
             {
-                try
+                 db.Users.Add(user);
+                var responsse = DBHelper.SaveChanges(db);
+                if (responsse.Succeded)
                 {
-                    db.Users.Add(user);
-                    db.SaveChanges();
                     UsersHelper.CreateUserASP(user.UserName, "User");
+
                 }
-                catch (Exception ex)
+                else
                 {
-                    if (ex.InnerException != null && ex.InnerException.InnerException != null && ex.InnerException.InnerException.Message.Contains("_Index"))
-                    {
-                        ModelState.AddModelError(string.Empty, "There are a record with the same value");
-                        ViewBag.CityId = new SelectList(CombosHelper.GetCities(), "CityId", "Name", user.CityId);
-                        ViewBag.CompanyId = new SelectList(CombosHelper.GetCompanies(), "CompanyId", "Name", user.CompanyId);
-                        ViewBag.DepartmentId = new SelectList(CombosHelper.GetDepartments(), "DepartmentId", "Name", user.DepartmentId);
-                        return View(user);
-                    }
-                    else
-                    {
-                        ModelState.AddModelError(string.Empty, ex.Message);
-                        ViewBag.CityId = new SelectList(CombosHelper.GetCities(), "CityId", "Name", user.CityId);
-                        ViewBag.CompanyId = new SelectList(CombosHelper.GetCompanies(), "CompanyId", "Name", user.CompanyId);
-                        ViewBag.DepartmentId = new SelectList(CombosHelper.GetDepartments(), "DepartmentId", "Name", user.DepartmentId);
-                        return View(user);
-                    }
+                    ModelState.AddModelError(string.Empty, responsse.Message);
+                    return View(user);
                 }
                
                 if (user.PhotoFile != null)
@@ -89,41 +76,22 @@ namespace Ecomerce.Controllers
                     {
                        var  response = FilesHelper.UploadPhoto(user.PhotoFile, pic, folder);                           
                        user.Photo = string.Format("{0}/{1}", folder, pic);
-                        #region guardar
-                        try
-                        {
-                            db.Entry(user).State = EntityState.Modified;
-                            db.SaveChanges();
-                        }
-                        catch (Exception ex)
-                        {
-                            if (ex.InnerException != null && ex.InnerException.InnerException != null && ex.InnerException.InnerException.Message.Contains("_Index"))
-                            {
-                                ModelState.AddModelError(string.Empty, "There are a record with the same value");
-                                ViewBag.CityId = new SelectList(CombosHelper.GetCities(), "CityId", "Name", user.CityId);
-                                ViewBag.CompanyId = new SelectList(CombosHelper.GetCompanies(), "CompanyId", "Name", user.CompanyId);
-                                ViewBag.DepartmentId = new SelectList(CombosHelper.GetDepartments(), "DepartmentId", "Name", user.DepartmentId);
-                                return View(user);
-                            }
-                            else
-                            {
-                                ModelState.AddModelError(string.Empty, ex.Message);
-                                ViewBag.CityId = new SelectList(CombosHelper.GetCities(), "CityId", "Name", user.CityId);
-                                ViewBag.CompanyId = new SelectList(CombosHelper.GetCompanies(), "CompanyId", "Name", user.CompanyId);
-                                ViewBag.DepartmentId = new SelectList(CombosHelper.GetDepartments(), "DepartmentId", "Name", user.DepartmentId);
-                                return View(user);
-                            }
-                        } 
-                        #endregion
+                        db.Entry(user).State = EntityState.Modified;
+                        var respons = DBHelper.SaveChanges(db);
 
-                    }
+                        if (!respons.Succeded)
+                        {
+                            ModelState.AddModelError(string.Empty, responsse.Message);
+                            return View(user);
+                        }
+                     }
                 } 
                
                   return RedirectToAction("Index");
                 
             }
 
-            ViewBag.CityId = new SelectList(CombosHelper.GetCities(), "CityId", "Name", user.CityId);
+            ViewBag.CityId = new SelectList(CombosHelper.GetCities(user.DepartmentId), "CityId", "Name", user.CityId);
             ViewBag.CompanyId = new SelectList(CombosHelper.GetCompanies(), "CompanyId", "Name", user.CompanyId);
             ViewBag.DepartmentId = new SelectList(CombosHelper.GetDepartments(), "DepartmentId", "Name", user.DepartmentId);
             return View(user);
@@ -141,7 +109,7 @@ namespace Ecomerce.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.CityId = new SelectList(CombosHelper.GetCities(), "CityId", "Name", user.CityId);
+            ViewBag.CityId = new SelectList(CombosHelper.GetCities(user.DepartmentId), "CityId", "Name", user.CityId);
             ViewBag.CompanyId = new SelectList(CombosHelper.GetCompanies(), "CompanyId", "Name", user.CompanyId);
             ViewBag.DepartmentId = new SelectList(CombosHelper.GetDepartments(), "DepartmentId", "Name", user.DepartmentId);
             return View(user);
@@ -185,7 +153,7 @@ namespace Ecomerce.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.CityId = new SelectList(CombosHelper.GetCities(), "CityId", "Name", user.CityId);
+            ViewBag.CityId = new SelectList(CombosHelper.GetCities(user.DepartmentId), "CityId", "Name", user.CityId);
             ViewBag.CompanyId = new SelectList(CombosHelper.GetCompanies(), "CompanyId", "Name", user.CompanyId);
             ViewBag.DepartmentId = new SelectList(CombosHelper.GetDepartments(), "DepartmentId", "Name", user.DepartmentId);
             return View(user);
@@ -218,12 +186,7 @@ namespace Ecomerce.Controllers
             return RedirectToAction("Index");
         }
 
-        public JsonResult GetCities(int departmentId)
-        {
-            db.Configuration.ProxyCreationEnabled = false;
-            var cities = db.Cities.Where(m => m.DepartmentId == departmentId);
-            return Json(cities);
-        }
+       
 
         protected override void Dispose(bool disposing)
         {

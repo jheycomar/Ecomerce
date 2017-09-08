@@ -42,7 +42,7 @@ namespace Ecomerce.Controllers
         // GET: Customers/Create
         public ActionResult Create()
         {
-            ViewBag.CityId = new SelectList(CombosHelper.GetCities(), "CityId", "Name");        
+            ViewBag.CityId = new SelectList(CombosHelper.GetCities(0), "CityId", "Name");        
             ViewBag.DepartmentId = new SelectList(CombosHelper.GetDepartments(), "DepartmentId", "Name");
             var user = db.Users.Where(u => u.UserName == User.Identity.Name).FirstOrDefault();
             var customer = new Customer { CompanyId=user.CompanyId};
@@ -57,39 +57,19 @@ namespace Ecomerce.Controllers
         {
             if (ModelState.IsValid)
             {
-                try
+                
+                 db.Customers.Add(customer);                    
+                var response = DBHelper.SaveChanges(db);
+                if (response.Succeded)
                 {
-                    db.Customers.Add(customer);
-                    db.SaveChanges();
                     UsersHelper.CreateUserASP(customer.UserName, "Customer");
+                    return RedirectToAction("Index");
                 }
-                #region catch Excepcion
-                catch (Exception ex)
-                {
-                    if (ex.InnerException != null && ex.InnerException.InnerException != null && ex.InnerException.InnerException.Message.Contains("_Index"))
-
-                    {
-                        ModelState.AddModelError(string.Empty, "There are a record with the same value");
-                        ViewBag.CityId = new SelectList(CombosHelper.GetCities(), "CityId", "Name", customer.CityId);
-                        ViewBag.DepartmentId = new SelectList(CombosHelper.GetDepartments(), "DepartmentId", "Name", customer.DepartmentId);
-                        return View(customer);
-
-                    }
-                    else
-                    {
-                        ModelState.AddModelError(string.Empty, ex.Message);
-                        ViewBag.CityId = new SelectList(CombosHelper.GetCities(), "CityId", "Name", customer.CityId);
-                        ViewBag.DepartmentId = new SelectList(CombosHelper.GetDepartments(), "DepartmentId", "Name", customer.DepartmentId);
-                        return View(customer);
-                    }
-
-                } 
-                #endregion
-
-                return RedirectToAction("Index");
+                ModelState.AddModelError(string.Empty, response.Message);
+               
             }
 
-            ViewBag.CityId = new SelectList(CombosHelper.GetCities(), "CityId", "Name", customer.CityId);
+            ViewBag.CityId = new SelectList(CombosHelper.GetCities(customer.DepartmentId), "CityId", "Name", customer.CityId);
             ViewBag.DepartmentId = new SelectList(CombosHelper.GetDepartments(), "DepartmentId", "Name", customer.DepartmentId);
             return View(customer);
         }
@@ -106,7 +86,7 @@ namespace Ecomerce.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.CityId = new SelectList(CombosHelper.GetCities(), "CityId", "Name", customer.CityId);
+            ViewBag.CityId = new SelectList(CombosHelper.GetCities(customer.DepartmentId), "CityId", "Name", customer.CityId);
             ViewBag.DepartmentId = new SelectList(CombosHelper.GetDepartments(), "DepartmentId", "Name", customer.DepartmentId);
             return View(customer);
         }
@@ -120,11 +100,15 @@ namespace Ecomerce.Controllers
             {
                 db.Entry(customer).State = EntityState.Modified;
                 db.SaveChanges();
-                //TODO: Validate when the customer email change
-
-                return RedirectToAction("Index");
+                var response = DBHelper.SaveChanges(db);
+                if (response.Succeded)
+                {
+                    //TODO: Validate when the customer email change
+                    return RedirectToAction("Index");
+                }
+                ModelState.AddModelError(string.Empty,response.Message);
             }
-            ViewBag.CityId = new SelectList(CombosHelper.GetCities(), "CityId", "Name", customer.CityId);
+            ViewBag.CityId = new SelectList(CombosHelper.GetCities(customer.DepartmentId), "CityId", "Name", customer.CityId);
             ViewBag.DepartmentId = new SelectList(CombosHelper.GetDepartments(), "DepartmentId", "Name", customer.DepartmentId);
             return View(customer);
         }
@@ -151,41 +135,18 @@ namespace Ecomerce.Controllers
         {
             Customer customer = db.Customers.Find(id);
             db.Customers.Remove(customer);
-            try
-            {
-                db.SaveChanges();
+            var response = DBHelper.SaveChanges(db);
+            if (response.Succeded)
+            {              
                 UsersHelper.DeleteUser(customer.UserName);
+                return RedirectToAction("Index");
             }
-            #region catch Excepcion
-            catch (Exception ex)
-            {
-                if (ex.InnerException != null && ex.InnerException.InnerException != null && ex.InnerException.InnerException.Message.Contains("_Index"))
-
-                {
-                    ModelState.AddModelError(string.Empty, "There are a record with the same value");
-                    ViewBag.CityId = new SelectList(CombosHelper.GetCities(), "CityId", "Name", customer.CityId);
-                    ViewBag.DepartmentId = new SelectList(CombosHelper.GetDepartments(), "DepartmentId", "Name", customer.DepartmentId);
-                    return View(customer);
-
-                }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, ex.Message);
-                    ViewBag.CityId = new SelectList(CombosHelper.GetCities(), "CityId", "Name", customer.CityId);
-                    ViewBag.DepartmentId = new SelectList(CombosHelper.GetDepartments(), "DepartmentId", "Name", customer.DepartmentId);
-                    return View(customer);
-                }
-
-            }
-            #endregion
-            return RedirectToAction("Index");
+            ModelState.AddModelError(string.Empty, response.Message);
+            return View(customer);
+            
+            
         }
-        public JsonResult GetCities(int departmentId)
-        {
-            db.Configuration.ProxyCreationEnabled = false;
-            var cities = db.Cities.Where(m => m.DepartmentId == departmentId);
-            return Json(cities);
-        }
+        
         protected override void Dispose(bool disposing)
         {
             if (disposing)

@@ -25,6 +25,7 @@ namespace Ecomerce.Models
 
         [Required(ErrorMessage = "The field {0} is required")]
         [Range(0, double.MaxValue, ErrorMessage = "The {0} must be between {1} and {2}")]
+        [DisplayFormat(DataFormatString = "{0:P2}", ApplyFormatInEditMode = false)]
         [Display(Name = "Tax rate")]
         public double TaxRate { get; set; }
 

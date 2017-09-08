@@ -19,9 +19,9 @@ namespace Ecomerce.Class
             
         }
 
-        public static List<City> GetCities()
+        public static List<City> GetCities(int departmentId)
         {
-            var cities = db.Cities.ToList();
+            var cities = db.Cities.Where(c=>c.DepartmentId== departmentId).ToList();
 
             cities.Add(new City { CityId = 0, Name = "[Select a city...]" });
 
@@ -34,6 +34,11 @@ namespace Ecomerce.Class
 
             products.Add(new Product { ProductId = 0, Description = "[Select a products...]" });
 
+            return products.OrderBy(p => p.Description).ToList();
+        }
+        public static List<Product> GetProducts(int companyId, bool sw)
+        {
+            var products = db.Products.Where(p => p.CompanyId == companyId).ToList();
             return products.OrderBy(p => p.Description).ToList();
         }
 
