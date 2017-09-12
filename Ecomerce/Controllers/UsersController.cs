@@ -182,7 +182,7 @@ namespace Ecomerce.Controllers
             User user = db.Users.Find(id);
             db.Users.Remove(user);
             db.SaveChanges();
-            UsersHelper.DeleteUser(user.UserName);
+            UsersHelper.DeleteUser(user.UserName,"User");
             return RedirectToAction("Index");
         }
 

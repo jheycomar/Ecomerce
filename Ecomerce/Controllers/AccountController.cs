@@ -17,7 +17,7 @@ namespace Ecomerce.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
-
+        private EcomerceDataContext db = new EcomerceDataContext();
         public AccountController()
         {
         }
@@ -26,6 +26,20 @@ namespace Ecomerce.Controllers
         {
             UserManager = userManager;
             SignInManager = signInManager;
+        }
+
+
+        public void Logo(LoginViewModel model)//logo en el menu
+        {
+            var user = db.Users.Where(u => u.UserName == model.Email).FirstOrDefault();
+            if (user != null)
+            {
+                var company = db.Companies.Find(user.CompanyId);
+                if (company != null)
+                {
+                    Session["Logo"] = company.Logo;
+                }
+            }
         }
 
         public ApplicationSignInManager SignInManager
@@ -78,7 +92,9 @@ namespace Ecomerce.Controllers
             var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
             switch (result)
             {
+               
                 case SignInStatus.Success:
+                    Logo(model);
                     return RedirectToLocal(returnUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");
@@ -392,6 +408,7 @@ namespace Ecomerce.Controllers
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            Session["Logo"] = null;
             return RedirectToAction("Index", "Home");
         }
 
@@ -419,7 +436,7 @@ namespace Ecomerce.Controllers
                     _signInManager = null;
                 }
             }
-
+            db.Dispose();
             base.Dispose(disposing);
         }
 

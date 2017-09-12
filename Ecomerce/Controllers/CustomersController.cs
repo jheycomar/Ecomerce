@@ -20,7 +20,18 @@ namespace Ecomerce.Controllers
         public ActionResult Index()
         {
             var user = db.Users.Where(u => u.UserName == User.Identity.Name).FirstOrDefault();
-            var customers = db.Customers.Where(c=>c.CompanyId==user.CompanyId).Include(c => c.City).Include(c => c.Department);
+
+            var qry = (from cu in db.Customers
+                       join cc in db.CompanyCustomers on cu.CustomerId equals cc.CustomerId
+                       join co in db.Companies on cc.CompanyId equals co.CompanyId
+                       where co.CompanyId == user.CompanyId
+                       select new { cu }).ToList();
+            var customers = new List<Customer>();
+            foreach (var item in qry)
+            {
+                customers.Add(item.cu);
+            }
+
             return View(customers.ToList());
         }
 
@@ -44,9 +55,8 @@ namespace Ecomerce.Controllers
         {
             ViewBag.CityId = new SelectList(CombosHelper.GetCities(0), "CityId", "Name");        
             ViewBag.DepartmentId = new SelectList(CombosHelper.GetDepartments(), "DepartmentId", "Name");
-            var user = db.Users.Where(u => u.UserName == User.Identity.Name).FirstOrDefault();
-            var customer = new Customer { CompanyId=user.CompanyId};
-            return View(customer);
+            
+            return View();
         }
 
         // POST: Customers/Create
@@ -57,16 +67,37 @@ namespace Ecomerce.Controllers
         {
             if (ModelState.IsValid)
             {
-                
-                 db.Customers.Add(customer);                    
-                var response = DBHelper.SaveChanges(db);
-                if (response.Succeded)
+
+                using (var transaction=db.Database.BeginTransaction())
                 {
-                    UsersHelper.CreateUserASP(customer.UserName, "Customer");
-                    return RedirectToAction("Index");
+                    try
+                    {
+                        db.Customers.Add(customer);
+                        var response = DBHelper.SaveChanges(db);
+                        if (!response.Succeded)
+                        {
+                         ModelState.AddModelError(string.Empty, response.Message);
+                            transaction.Rollback();
+                            ViewBag.CityId = new SelectList(CombosHelper.GetCities(customer.DepartmentId), "CityId", "Name", customer.CityId);
+                            ViewBag.DepartmentId = new SelectList(CombosHelper.GetDepartments(), "DepartmentId", "Name", customer.DepartmentId);
+                            return View(customer);
+                        }
+                        UsersHelper.CreateUserASP(customer.UserName, "Customer");
+                        var user = db.Users.Where(u => u.UserName == User.Identity.Name).FirstOrDefault();
+                        var companyCustomer = new CompanyCustomer { CompanyId = user.CompanyId, CustomerId = customer.CustomerId, };
+                        db.CompanyCustomers.Add(companyCustomer);
+                        db.SaveChanges();
+                        transaction.Commit();
+                        return RedirectToAction("Index");
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        ModelState.AddModelError(string.Empty,ex.Message);
+                       
+                    }
+
                 }
-                ModelState.AddModelError(string.Empty, response.Message);
-               
             }
 
             ViewBag.CityId = new SelectList(CombosHelper.GetCities(customer.DepartmentId), "CityId", "Name", customer.CityId);
@@ -134,15 +165,25 @@ namespace Ecomerce.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Customer customer = db.Customers.Find(id);
-            db.Customers.Remove(customer);
-            var response = DBHelper.SaveChanges(db);
-            if (response.Succeded)
-            {              
-                UsersHelper.DeleteUser(customer.UserName);
-                return RedirectToAction("Index");
+            var user = db.Users.Where(u => u.UserName == User.Identity.Name).FirstOrDefault();
+            var companycustomer = db.CompanyCustomers.Where(cc=>cc.CompanyId==user.CompanyId && cc.CustomerId==customer.CustomerId).FirstOrDefault();
+          
+
+
+            using (var transaction=db.Database.BeginTransaction())
+            {
+                db.CompanyCustomers.Remove(companycustomer);
+                db.Customers.Remove(customer);
+                var response = DBHelper.SaveChanges(db);
+                if (response.Succeded)
+                {
+                    transaction.Commit();
+                    return RedirectToAction("Index");
+                }
+                transaction.Rollback();
+                ModelState.AddModelError(string.Empty, response.Message);
+                return View(customer); 
             }
-            ModelState.AddModelError(string.Empty, response.Message);
-            return View(customer);
             
             
         }
