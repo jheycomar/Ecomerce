@@ -57,25 +57,16 @@ namespace Ecomerce.Controllers
             if (ModelState.IsValid)
             {
                 db.Cities.Add(city);
-                try
-                {
-                    db.SaveChanges();
+               
+                   var respons = DBHelper.SaveChanges(db);
+
+                    if (!respons.Succeded)
+                    {
+                        ModelState.AddModelError(string.Empty, respons.Message);
+                        return View(city);
+                    }
                     return RedirectToAction("Index");
-                }
-                catch (Exception ex)
-                {
-                    if (ex.InnerException != null && ex.InnerException.InnerException != null && ex.InnerException.InnerException.Message.Contains("_Index"))
-
-                    {
-                        ModelState.AddModelError(string.Empty, "There are a record with the same value");
-
-                    }
-                    else
-                    {
-                        ModelState.AddModelError(string.Empty, ex.Message);
-                    }
-                    
-                }
+               
             }
 
             ViewBag.DepartmentId = new SelectList(CombosHelper.GetDepartments(), "DepartmentId", "Name", city.DepartmentId);
@@ -108,24 +99,17 @@ namespace Ecomerce.Controllers
             if (ModelState.IsValid)
             {
                 db.Entry(city).State = EntityState.Modified;
-                try
-                {
-                    db.SaveChanges();
+                               
+                    var respons = DBHelper.SaveChanges(db);
+
+                    if (!respons.Succeded)
+                    {
+                        ModelState.AddModelError(string.Empty, respons.Message);
+                        return View(city);
+                    }
+
                     return RedirectToAction("Index");
-                }
-                catch (Exception ex)
-                {
-                    if (ex.InnerException != null && ex.InnerException.InnerException != null && ex.InnerException.InnerException.Message.Contains("_Index"))
-
-                    {
-                        ModelState.AddModelError(string.Empty, "There are a record with the same value");
-
-                    }
-                    else
-                    {
-                        ModelState.AddModelError(string.Empty, ex.Message);
-                    }
-                }
+               
             }
             ViewBag.DepartmentId = new SelectList(CombosHelper.GetDepartments(), "DepartmentId", "Name", city.DepartmentId);
             return View(city);
@@ -152,8 +136,14 @@ namespace Ecomerce.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             City city = db.Cities.Find(id);
-            db.Cities.Remove(city);
-            db.SaveChanges();
+            db.Cities.Remove(city);            
+            var respons = DBHelper.SaveChanges(db);
+            if (!respons.Succeded)
+            {
+                ModelState.AddModelError(string.Empty, respons.Message);
+                return View(city);
+            }
+
             return RedirectToAction("Index");
         }
 

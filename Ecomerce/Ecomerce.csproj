@@ -218,22 +218,24 @@
     <Compile Include="Class\FilesHelper.cs" />
     <Compile Include="Class\MailHelper.cs" />
     <Compile Include="Class\MovementsHelper.cs" />
+    <Compile Include="Class\UserResponse.cs" />
     <Compile Include="Class\UsersHelper.cs" />
-    <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\CategoriesController.cs" />
-    <Compile Include="Controllers\CitiesController.cs" />
-    <Compile Include="Controllers\CompaniesController.cs" />
-    <Compile Include="Controllers\CustomersController.cs" />
-    <Compile Include="Controllers\DepartmentsController.cs" />
-    <Compile Include="Controllers\GenericController.cs" />
-    <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\ManageController.cs" />
-    <Compile Include="Controllers\OrdersController.cs" />
-    <Compile Include="Controllers\ProductsController.cs" />
-    <Compile Include="Controllers\StatesController.cs" />
-    <Compile Include="Controllers\TaxesController.cs" />
-    <Compile Include="Controllers\UsersController.cs" />
-    <Compile Include="Controllers\WarehousesController.cs" />
+    <Compile Include="Controllers\API\UsersController.cs" />
+    <Compile Include="Controllers\MVC\AccountController.cs" />
+    <Compile Include="Controllers\MVC\CategoriesController.cs" />
+    <Compile Include="Controllers\MVC\CitiesController.cs" />
+    <Compile Include="Controllers\MVC\CompaniesController.cs" />
+    <Compile Include="Controllers\MVC\CustomersController.cs" />
+    <Compile Include="Controllers\MVC\DepartmentsController.cs" />
+    <Compile Include="Controllers\MVC\GenericController.cs" />
+    <Compile Include="Controllers\MVC\HomeController.cs" />
+    <Compile Include="Controllers\MVC\ManageController.cs" />
+    <Compile Include="Controllers\MVC\OrdersController.cs" />
+    <Compile Include="Controllers\MVC\ProductsController.cs" />
+    <Compile Include="Controllers\MVC\StatesController.cs" />
+    <Compile Include="Controllers\MVC\TaxesController.cs" />
+    <Compile Include="Controllers\MVC\UsersController.cs" />
+    <Compile Include="Controllers\MVC\WarehousesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -282,6 +284,7 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Properties\PublishProfiles\somee.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\ecommerce.js" />
     <Content Include="Scripts\fileupload.js" />

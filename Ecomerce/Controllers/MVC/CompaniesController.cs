@@ -54,24 +54,17 @@ namespace Ecomerce.Controllers
         public ActionResult Create( Company company)
         {
             if (ModelState.IsValid)
-            {
+             {                
+                 db.Companies.Add(company);
+                 db.SaveChanges();
+                 var respons = DBHelper.SaveChanges(db);
 
-                try
-                {
-                    db.Companies.Add(company);
-                    db.SaveChanges();
-                }
-                catch (Exception ex)
-                {
-                    if (ex.InnerException != null && ex.InnerException.InnerException != null && ex.InnerException.InnerException.Message.Contains("_Index"))
-                    {
-                        ModelState.AddModelError(string.Empty, "There are a record with the same value");
-                    }
-                    else
-                    {
-                        ModelState.AddModelError(string.Empty, ex.Message);
-                    }
-                }
+                 if (!respons.Succeded)
+                  {
+                     ModelState.AddModelError(string.Empty, respons.Message);
+                     return View(company);
+                  }
+               
 
                 if (company.LogoFile != null)
                 {
@@ -82,25 +75,15 @@ namespace Ecomerce.Controllers
                     {
                         pic = FilesHelper.UploadPhoto(company.LogoFile, pic, folder);
                         company.Logo = string.Format("{0}/{1}", folder, pic);
-
-                        #region guardar
-                        try
-                        {
+                                               
                             db.Entry(company).State = EntityState.Modified;
-                            db.SaveChanges();
-                        }
-                        catch (Exception ex)
-                        {
-                            if (ex.InnerException != null && ex.InnerException.InnerException != null && ex.InnerException.InnerException.Message.Contains("_Index"))
+                            var respon = DBHelper.SaveChanges(db);
+                            if (!respon.Succeded)
                             {
-                                ModelState.AddModelError(string.Empty, "There are a record with the same value");
+                                ModelState.AddModelError(string.Empty, respon.Message);
+                                return View(company);
                             }
-                            else
-                            {
-                                ModelState.AddModelError(string.Empty, ex.Message);
-                            }
-                        }
-                        #endregion
+                         
                     }
                 }
                 return RedirectToAction("Index");
@@ -129,9 +112,7 @@ namespace Ecomerce.Controllers
             return View(company);
         }
 
-        // POST: Companies/Edit/5
-        // Para protegerse de ataques de publicación excesiva, habilite las propiedades específicas a las que desea enlazarse. Para obtener 
-        // más información vea http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Companies/Edit/5     
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit( Company company)
@@ -148,26 +129,16 @@ namespace Ecomerce.Controllers
                     pic = string.Format("{0}/{1}", folder, pic);
                     company.Logo = pic;
                 }
-                try
+                db.Entry(company).State = EntityState.Modified;
+                var respon = DBHelper.SaveChanges(db);
+                if (!respon.Succeded)
                 {
-
-                    db.Entry(company).State = EntityState.Modified;
-                    db.SaveChanges();
-                    return RedirectToAction("Index");
+                 ModelState.AddModelError(string.Empty, respon.Message);
+                  return View(company);
                 }
-                catch (Exception ex)
-                {
-                    if (ex.InnerException != null && ex.InnerException.InnerException != null && ex.InnerException.InnerException.Message.Contains("_Index"))
-
-                    {
-                        ModelState.AddModelError(string.Empty, "There are a record with the same value");
-
-                    }
-                    else
-                    {
-                        ModelState.AddModelError(string.Empty, ex.Message);
-                    }
-                }
+                 return RedirectToAction("Index");
+                
+                
             }
             ViewBag.CityId = new SelectList(CombosHelper.GetCities(company.DepartmentId), "CityId", "Name", company.CityId);
             ViewBag.DepartmentId = new SelectList(CombosHelper.GetDepartments(), "DepartmentId", "Name", company.DepartmentId);
@@ -196,12 +167,15 @@ namespace Ecomerce.Controllers
         {
             Company company = db.Companies.Find(id);
             db.Companies.Remove(company);
-            db.SaveChanges();
+            var respon = DBHelper.SaveChanges(db);
+            if (!respon.Succeded)
+            {
+                ModelState.AddModelError(string.Empty, respon.Message);
+                return View(company);
+            }
+
             return RedirectToAction("Index");
         }
-
-     
-
 
         protected override void Dispose(bool disposing)
         {

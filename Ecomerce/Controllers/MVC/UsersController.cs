@@ -81,7 +81,7 @@ namespace Ecomerce.Controllers
 
                         if (!respons.Succeded)
                         {
-                            ModelState.AddModelError(string.Empty, responsse.Message);
+                            ModelState.AddModelError(string.Empty, respons.Message);
                             return View(user);
                         }
                      }
@@ -151,6 +151,14 @@ namespace Ecomerce.Controllers
                 db2.Dispose();
                 db.Entry(user).State = EntityState.Modified;
                 db.SaveChanges();
+
+                var respons = DBHelper.SaveChanges(db);
+
+                if (!respons.Succeded)
+                {
+                    ModelState.AddModelError(string.Empty, respons.Message);
+                    return View(user);
+                }
                 return RedirectToAction("Index");
             }
             ViewBag.CityId = new SelectList(CombosHelper.GetCities(user.DepartmentId), "CityId", "Name", user.CityId);
@@ -181,7 +189,14 @@ namespace Ecomerce.Controllers
         {
             User user = db.Users.Find(id);
             db.Users.Remove(user);
-            db.SaveChanges();
+            var respons = DBHelper.SaveChanges(db);
+
+            if (!respons.Succeded)
+            {
+                ModelState.AddModelError(string.Empty, respons.Message);
+                return View(user);
+            }
+
             UsersHelper.DeleteUser(user.UserName,"User");
             return RedirectToAction("Index");
         }

@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Ecomerce.Models;
+using Ecomerce.Class;
 
 namespace Ecomerce.Controllers
 {
@@ -43,34 +44,24 @@ namespace Ecomerce.Controllers
         }
 
         // POST: Departments/Create
-        // Para protegerse de ataques de publicación excesiva, habilite las propiedades específicas a las que desea enlazarse. Para obtener 
-        // más información vea http://go.microsoft.com/fwlink/?LinkId=317598.
+      
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "DepartmentId,Name")] Department department)
         {
             if (ModelState.IsValid)
             {
-                db.Departments.Add(department);
-                try
-                {
-                    db.SaveChanges();
-                    return RedirectToAction("Index");
-                }
-                catch (Exception ex)
-                {
-                    if (ex.InnerException != null && ex.InnerException.InnerException != null && ex.InnerException.InnerException.Message.Contains("_Index"))
-
-                    {
-                        ModelState.AddModelError(string.Empty, "There are a record with the same value");
-
-                    }
-                    else
-                    { ModelState.AddModelError(string.Empty, ex.Message);
-                    }
+                db.Departments.Add(department);                
                    
-                  
-                }
+                    var respon = DBHelper.SaveChanges(db);
+                    if (!respon.Succeded)
+                    {
+                        ModelState.AddModelError(string.Empty, respon.Message);
+                        return View(department);
+                    }
+                    return RedirectToAction("Index");
+                
+                
             }
 
             return View(department);
@@ -91,9 +82,7 @@ namespace Ecomerce.Controllers
             return View(department);
         }
 
-        // POST: Departments/Edit/5
-        // Para protegerse de ataques de publicación excesiva, habilite las propiedades específicas a las que desea enlazarse. Para obtener 
-        // más información vea http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Departments/Edit/5      
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "DepartmentId,Name")] Department department)
@@ -101,25 +90,15 @@ namespace Ecomerce.Controllers
             if (ModelState.IsValid)
             {
                 db.Entry(department).State = EntityState.Modified;
-                try
-                {
-                    db.SaveChanges();
+                
+                    var respon = DBHelper.SaveChanges(db);
+                    if (!respon.Succeded)
+                    {
+                        ModelState.AddModelError(string.Empty, respon.Message);
+                        return View(department);
+                    }
                     return RedirectToAction("Index");
-                }
-                catch ( Exception ex)
-                {
-                    if (ex.InnerException != null && ex.InnerException.InnerException != null && ex.InnerException.InnerException.Message.Contains("_Index"))
-
-                    {
-                        ModelState.AddModelError(string.Empty, "There are a record with the same value");
-
-                    }
-                    else
-                    {
-                        ModelState.AddModelError(string.Empty, ex.Message);
-                    }
-
-                }
+                
             }
             return View(department);
         }
@@ -146,23 +125,13 @@ namespace Ecomerce.Controllers
         {
             Department department = db.Departments.Find(id);
             db.Departments.Remove(department);
-            try
-            {
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            catch (Exception ex)
-            {
-                if (ex.InnerException != null && ex.InnerException.InnerException != null && ex.InnerException.InnerException.Message.Contains("REFERENCE"))
-
+                var respon = DBHelper.SaveChanges(db);
+                if (!respon.Succeded)
                 {
-                    ModelState.AddModelError(string.Empty, "The record can't be delete because it has related records");
-
+                    ModelState.AddModelError(string.Empty, respon.Message);
+                    return View(department);
                 }
-                else { ModelState.AddModelError(string.Empty,ex.Message); }
-                   
-            }
-            return View(department);
+                return RedirectToAction("Index");
         }
 
         protected override void Dispose(bool disposing)

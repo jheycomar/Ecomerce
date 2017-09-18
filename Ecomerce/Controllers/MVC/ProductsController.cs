@@ -64,31 +64,14 @@ namespace Ecomerce.Controllers
 
             if (ModelState.IsValid)
             {
-                #region savechanges
-                try
+                db.Products.Add(product);
+                var responsse = DBHelper.SaveChanges(db);
+                if (!responsse.Succeded)
                 {
-                    db.Products.Add(product);
-                    db.SaveChanges();
-
+                    ModelState.AddModelError(string.Empty, responsse.Message);
+                    return View(product);
                 }
-                catch (Exception ex)
-                {
-                    if (ex.InnerException != null && ex.InnerException.InnerException != null && ex.InnerException.InnerException.Message.Contains("_Index"))
-                    {
-                        ModelState.AddModelError(string.Empty, "There are a record with the same value");
-                        ViewBag.CategoryId = new SelectList(CombosHelper.GetCategories(product.CompanyId), "CategoryId", "Description", product.CategoryId);
-                        ViewBag.TaxId = new SelectList(CombosHelper.GetTaxes(product.CompanyId), "TaxId", "Description", product.TaxId);
-                        return View(product);
-                    }
-                    else
-                    {
-                        ModelState.AddModelError(string.Empty, ex.Message);
-                        ViewBag.CategoryId = new SelectList(CombosHelper.GetCategories(product.CompanyId), "CategoryId", "Description", product.CategoryId);
-                        ViewBag.TaxId = new SelectList(CombosHelper.GetTaxes(product.CompanyId), "TaxId", "Description", product.TaxId);
-                        return View(product);
-                    }
-                } 
-                #endregion
+                
 
                 if (product.ImageFile != null)
                 {
@@ -99,31 +82,14 @@ namespace Ecomerce.Controllers
                     {
                         var response = FilesHelper.UploadPhoto(product.ImageFile, pic, folder);
                         product.Image = string.Format("{0}/{1}", folder, pic);
-                    
-                        #region guardar
-                        try
+                        db.Entry(product).State = EntityState.Modified;
+                        var respons = DBHelper.SaveChanges(db);
+                        if (!responsse.Succeded)
                         {
-                            db.Entry(product).State = EntityState.Modified;
-                            db.SaveChanges();
+                            ModelState.AddModelError(string.Empty, responsse.Message);
+                            return View(product);
                         }
-                        catch (Exception ex)
-                        {
-                            if (ex.InnerException != null && ex.InnerException.InnerException != null && ex.InnerException.InnerException.Message.Contains("_Index"))
-                            {
-                                ModelState.AddModelError(string.Empty, "There are a record with the same value");
-                                ViewBag.CategoryId = new SelectList(CombosHelper.GetCategories(user.CompanyId), "CategoryId", "Description", product.CategoryId);
-                                ViewBag.TaxId = new SelectList(CombosHelper.GetTaxes(user.CompanyId), "TaxId", "Description", product.TaxId);
-                                return View(product);
-                            }
-                            else
-                            {
-                                ModelState.AddModelError(string.Empty, ex.Message);
-                                ViewBag.CategoryId = new SelectList(CombosHelper.GetCategories(user.CompanyId), "CategoryId", "Description", product.CategoryId);
-                                ViewBag.TaxId = new SelectList(CombosHelper.GetTaxes(user.CompanyId), "TaxId", "Description", product.TaxId);
-                                return View(product);
-                            }
-                        }
-                        #endregion
+                       
                     }
                 }
                
@@ -182,23 +148,16 @@ namespace Ecomerce.Controllers
 
                 }
                 product.Image = pic;
-                try
-                {
+               
                     db.Entry(product).State = EntityState.Modified;
-                    db.SaveChanges();
-                    return RedirectToAction("Index");
-                }
-                catch (Exception ex)
-                {
-                    if (ex.InnerException != null && ex.InnerException.InnerException != null && ex.InnerException.InnerException.Message.Contains("_Index"))
+                    var respon = DBHelper.SaveChanges(db);
+                    if (!respon.Succeded)
                     {
-                        ModelState.AddModelError(string.Empty, "There are a record with the same value");
-                    }
-                    else
-                    {
-                        ModelState.AddModelError(string.Empty, ex.Message);
-                    }
-                }
+                        ModelState.AddModelError(string.Empty, respon.Message);
+                        return View(product);
+                    }                    
+                    return RedirectToAction("Index");                
+                
             }
 
             ViewBag.CategoryId = new SelectList(CombosHelper.GetCategories(product.CompanyId), "CategoryId", "Description", product.CategoryId);
@@ -228,7 +187,14 @@ namespace Ecomerce.Controllers
         {
             Product product = db.Products.Find(id);
             db.Products.Remove(product);
-            db.SaveChanges();
+           var respon = DBHelper.SaveChanges(db);
+            if (!respon.Succeded)
+            {
+                ModelState.AddModelError(string.Empty, respon.Message);
+                return View(product);
+            }
+
+
             return RedirectToAction("Index");
         }
 

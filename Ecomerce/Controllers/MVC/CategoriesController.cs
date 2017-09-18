@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Ecomerce.Models;
+using Ecomerce.Class;
 
 namespace Ecomerce.Controllers
 {
@@ -62,26 +63,19 @@ namespace Ecomerce.Controllers
         {
             if (ModelState.IsValid)
             {
-                try
-                {
+                
                     db.Categories.Add(category);
-                    db.SaveChanges();
+
+                    var respon = DBHelper.SaveChanges(db);
+                    if (!respon.Succeded)
+                    {
+                        ModelState.AddModelError(string.Empty, respon.Message);
+                    ViewBag.CompanyId = new SelectList(db.Companies, "CompanyId", "Name", category.CompanyId);
+                    return View(category);
+                    }
                     return RedirectToAction("Index");
-                }
-                catch (Exception ex)
-                {
-
-                    if (ex.InnerException != null && ex.InnerException.InnerException != null && ex.InnerException.InnerException.Message.Contains("_Index"))
-
-                    {
-                        ModelState.AddModelError(string.Empty, "There are a record with the same value");
-
-                    }
-                    else
-                    {
-                        ModelState.AddModelError(string.Empty, ex.Message);
-                    }
-                }
+                
+                
             }
 
             ViewBag.CompanyId = new SelectList(db.Companies, "CompanyId", "Name", category.CompanyId);
@@ -105,34 +99,24 @@ namespace Ecomerce.Controllers
         }
 
         // POST: Categories/Edit/5
-        // Para protegerse de ataques de publicación excesiva, habilite las propiedades específicas a las que desea enlazarse. Para obtener 
-        // más información vea http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(Category category)
         {
             if (ModelState.IsValid)
             {
-                try
-                {
+                
                     db.Entry(category).State = EntityState.Modified;
-                    db.SaveChanges();
+                    var respon = DBHelper.SaveChanges(db);
+                    if (!respon.Succeded)
+                    {
+                        ModelState.AddModelError(string.Empty, respon.Message);
+                        ViewBag.CompanyId = new SelectList(db.Companies, "CompanyId", "Name", category.CompanyId);
+                        return View(category);
+                    }
                     return RedirectToAction("Index");
-                }
-                catch (Exception ex)
-                {
-
-                    if (ex.InnerException != null && ex.InnerException.InnerException != null && ex.InnerException.InnerException.Message.Contains("_Index"))
-
-                    {
-                        ModelState.AddModelError(string.Empty, "There are a record with the same value");
-
-                    }
-                    else
-                    {
-                        ModelState.AddModelError(string.Empty, ex.Message);
-                    }
-                }
+                
+                
             }
             ViewBag.CompanyId = new SelectList(db.Companies, "CompanyId", "Name", category.CompanyId);
             return View(category);
@@ -159,8 +143,13 @@ namespace Ecomerce.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Category category = db.Categories.Find(id);
-            db.Categories.Remove(category);
-            db.SaveChanges();
+            db.Categories.Remove(category);         
+            var respon = DBHelper.SaveChanges(db);
+            if (!respon.Succeded)
+            {
+                ModelState.AddModelError(string.Empty, respon.Message);
+                 return View(category);
+            }    
             return RedirectToAction("Index");
         }
 

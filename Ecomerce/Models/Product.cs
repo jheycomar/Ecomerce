@@ -55,8 +55,22 @@ namespace Ecomerce.Models
        [DataType(DataType.MultilineText)]        
         public string Remarks { get; set; }
 
-        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]       
-        public double Stock { get {return Inventories.Sum(i=>i.Stock); }  }
+        
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
+        public double Stock
+        {
+            get
+            {
+                try
+                {
+                    return Inventories.Sum(i => i.Stock);
+                }
+                catch (Exception )
+                {                    
+                    return 0;
+                }
+            }
+        }
 
         public virtual Company Company { get; set; }
         public virtual Category Category { get; set; }

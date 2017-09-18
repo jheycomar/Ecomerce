@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Ecomerce.Models;
+using Ecomerce.Class;
 
 namespace Ecomerce.Controllers
 {
@@ -52,7 +53,12 @@ namespace Ecomerce.Controllers
             if (ModelState.IsValid)
             {
                 db.States.Add(state);
-                db.SaveChanges();
+                var respon = DBHelper.SaveChanges(db);
+                if (!respon.Succeded)
+                {
+                    ModelState.AddModelError(string.Empty, respon.Message);
+                    return View(state);
+                }
                 return RedirectToAction("Index");
             }
 
@@ -76,15 +82,19 @@ namespace Ecomerce.Controllers
 
         // POST: States/Edit/5
         // Para protegerse de ataques de publicación excesiva, habilite las propiedades específicas a las que desea enlazarse. Para obtener 
-        // más información vea http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+      [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "StateId,Description")] State state)
         {
             if (ModelState.IsValid)
             {
                 db.Entry(state).State = EntityState.Modified;
-                db.SaveChanges();
+                var respon = DBHelper.SaveChanges(db);
+                if (!respon.Succeded)
+                {
+                    ModelState.AddModelError(string.Empty, respon.Message);
+                    return View(state);
+                }
                 return RedirectToAction("Index");
             }
             return View(state);
@@ -112,7 +122,12 @@ namespace Ecomerce.Controllers
         {
             State state = db.States.Find(id);
             db.States.Remove(state);
-            db.SaveChanges();
+            var respon = DBHelper.SaveChanges(db);
+            if (!respon.Succeded)
+            {
+                ModelState.AddModelError(string.Empty, respon.Message);
+                return View(state);
+            }
             return RedirectToAction("Index");
         }
 

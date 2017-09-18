@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Ecomerce.Models;
+using Ecomerce.Class;
 
 namespace Ecomerce.Controllers
 {
@@ -63,26 +64,14 @@ namespace Ecomerce.Controllers
         {
             if (ModelState.IsValid)
             {
-                try
-                {
                     db.Taxes.Add(tax);
-                    db.SaveChanges();
+                    var respon = DBHelper.SaveChanges(db);
+                    if (!respon.Succeded)
+                    {
+                        ModelState.AddModelError(string.Empty, respon.Message);
+                        return View(tax);
+                    }
                     return RedirectToAction("Index");
-                }
-                catch (Exception ex)
-                {
-
-                    if (ex.InnerException != null && ex.InnerException.InnerException != null && ex.InnerException.InnerException.Message.Contains("_Index"))
-
-                    {
-                        ModelState.AddModelError(string.Empty, "There are a record with the same value");
-
-                    }
-                    else
-                    {
-                        ModelState.AddModelError(string.Empty, ex.Message);
-                    }
-                }
             }
 
            
@@ -113,26 +102,15 @@ namespace Ecomerce.Controllers
         {
             if (ModelState.IsValid)
             {
-                try
-                {
                     db.Entry(tax).State = EntityState.Modified;
-                    db.SaveChanges();
+                    var respon = DBHelper.SaveChanges(db);
+                    if (!respon.Succeded)
+                    {
+                        ModelState.AddModelError(string.Empty, respon.Message);
+                        return View(tax);
+                    }
                     return RedirectToAction("Index");
-                }
-                catch (Exception ex)
-                {
-
-                    if (ex.InnerException != null && ex.InnerException.InnerException != null && ex.InnerException.InnerException.Message.Contains("_Index"))
-
-                    {
-                        ModelState.AddModelError(string.Empty, "There are a record with the same value");
-
-                    }
-                    else
-                    {
-                        ModelState.AddModelError(string.Empty, ex.Message);
-                    }
-                }
+                
             }
          
             return View(tax);
@@ -160,7 +138,12 @@ namespace Ecomerce.Controllers
         {
             Tax tax = db.Taxes.Find(id);
             db.Taxes.Remove(tax);
-            db.SaveChanges();
+            var respon = DBHelper.SaveChanges(db);
+            if (!respon.Succeded)
+            {
+                ModelState.AddModelError(string.Empty, respon.Message);
+                return View(tax);
+            }
             return RedirectToAction("Index");
         }
 

@@ -157,17 +157,21 @@ namespace Ecomerce.Controllers
 
         // POST: Orders/Edit/5
         // Para protegerse de ataques de publicación excesiva, habilite las propiedades específicas a las que desea enlazarse. Para obtener 
-        // más información vea http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "OrderId,CustomerId,StateId,Date,Remarks")] Order order)
+        public ActionResult Edit(Order order)
         {
             if (ModelState.IsValid)
-            {
-                db.Entry(order).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
+             {
+                 db.Entry(order).State = EntityState.Modified;
+                  var respon = DBHelper.SaveChanges(db);
+                  if (!respon.Succeded)
+                  {
+                      ModelState.AddModelError(string.Empty, respon.Message);
+                      return View(order);
+                  }
+                 return RedirectToAction("Index");
+              }
             ViewBag.CustomerId = new SelectList(db.Customers, "CustomerId", "UserName", order.CustomerId);
             ViewBag.StateId = new SelectList(db.States, "StateId", "Description", order.StateId);
             return View(order);
@@ -195,7 +199,12 @@ namespace Ecomerce.Controllers
         {
             Order order = db.Orders.Find(id);
             db.Orders.Remove(order);
-            db.SaveChanges();
+            var respon = DBHelper.SaveChanges(db);
+            if (!respon.Succeded)
+            {
+                ModelState.AddModelError(string.Empty, respon.Message);
+                return View(order);
+            }
             return RedirectToAction("Index");
         }
 

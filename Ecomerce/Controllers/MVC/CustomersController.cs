@@ -130,14 +130,16 @@ namespace Ecomerce.Controllers
             if (ModelState.IsValid)
             {
                 db.Entry(customer).State = EntityState.Modified;
-                db.SaveChanges();
                 var response = DBHelper.SaveChanges(db);
-                if (response.Succeded)
+                if (!response.Succeded)
                 {
-                    //TODO: Validate when the customer email change
-                    return RedirectToAction("Index");
+                    ModelState.AddModelError(string.Empty, response.Message);
+                    return View();
                 }
-                ModelState.AddModelError(string.Empty,response.Message);
+                //TODO: Validate when the customer email change
+                  return RedirectToAction("Index");
+                
+                
             }
             ViewBag.CityId = new SelectList(CombosHelper.GetCities(customer.DepartmentId), "CityId", "Name", customer.CityId);
             ViewBag.DepartmentId = new SelectList(CombosHelper.GetDepartments(), "DepartmentId", "Name", customer.DepartmentId);
