@@ -34,8 +34,9 @@ namespace Ecomerce.Models
        
         [DataType(DataType.ImageUrl)]
         public string Logo { get; set; }
+
         [NotMapped]
-        public HttpPostedFileBase LogoFile { get; set; }
+        public HttpPostedFileBase LogoFile { get; }
 
         [Required(ErrorMessage = "The field {0} is required")]
         [Range(1, Double.MaxValue, ErrorMessage = "You must select a {0}")]

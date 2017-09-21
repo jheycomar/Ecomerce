@@ -20,7 +20,7 @@ namespace Ecomerce.Models
         public string Description { get; set; }
 
         [Required(ErrorMessage = "The field {0} is required")]
-        [Range(0, Double.MaxValue, ErrorMessage = "You must select a {0} between {1} and {2}")]
+        [Range(0, 1, ErrorMessage = "You must select a {0} between {1} and {2}")]
         [DisplayFormat(DataFormatString = "{0:P2}", ApplyFormatInEditMode = false)]
         public double Rate { get; set; }
 

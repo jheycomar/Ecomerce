@@ -9,10 +9,11 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Ecomerce.Models;
-using Newtonsoft.Json.Linq;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity;
 using Ecomerce.Class;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace Ecomerce.Controllers.API
 {
@@ -23,36 +24,42 @@ namespace Ecomerce.Controllers.API
 
         [HttpPost]
         [Route("Login")]
-        public IHttpActionResult Login(JObject form)
+        public IHttpActionResult Longin(JObject form)
         {
             db.Configuration.ProxyCreationEnabled = false;
-            var email = string.Empty;
-            var password = string.Empty;
+            string email = string.Empty;
+            string password = string.Empty;
             dynamic jsonObject = form;
 
             try
             {
                 email = jsonObject.Email.Value;
                 password = jsonObject.Password.Value;
-
             }
-            catch (Exception)
+            catch
             {
-                return BadRequest("Incorrect call");
+                return this.BadRequest("Incorrect call");
             }
-            //busca el usuario y contraseña
+
             var userContext = new ApplicationDbContext();
             var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(userContext));
-            var userASP = userManager.Find(email,password);
-            if (userASP==null)
+            var userASP = userManager.Find(email, password);
+
+            if (userASP == null)
             {
-                return BadRequest("Wrong user or password");
+                return this.BadRequest("User or password wrong");
             }
-            var user = db.Users.Where(u => u.UserName == email).Include(u=>u.City).Include(u => u.Department).Include(u => u.Company).FirstOrDefault();
+
+            var user = db.Users.Where(u => u.UserName == email)
+                .Include(u => u.City)
+                .Include(u => u.Department)
+                .Include(u => u.Company).FirstOrDefault();
+
             if (user == null)
             {
-                return BadRequest("Wrong user or password");
+                return this.BadRequest("User not found");
             }
+
             var userResponse = new UserResponse
             {
                 Address = user.Address,
@@ -62,20 +69,24 @@ namespace Ecomerce.Controllers.API
                 DepartmentId = user.DepartmentId,
                 DepartmentName = user.Department.Name,
                 FirstName = user.FirstName,
-                IsAdmin = userManager.IsInRole(userASP.Id,"Admin"),
+                IsAdmin = userManager.IsInRole(userASP.Id, "Admin"),
                 IsCustomer = userManager.IsInRole(userASP.Id, "Customer"),
                 IsSupplier = userManager.IsInRole(userASP.Id, "Supplier"),
                 IsUser = userManager.IsInRole(userASP.Id, "User"),
-                LastName=user.LastName,
-                Phone=user.Phone,
-                Photo=user.Photo,
-                UserId=user.UserId,
-                UserName=user.UserName,
+                LastName = user.LastName,
+                Phone = user.Phone,
+                Photo = user.Photo,
+                UserId = user.UserId,
+                UserName = user.UserName,
 
             };
 
+           
             return Ok(userResponse);
         }
+        
+
+
         // GET: api/Users
         public IQueryable<User> GetUsers()
         {
@@ -87,6 +98,7 @@ namespace Ecomerce.Controllers.API
         [ResponseType(typeof(User))]
         public IHttpActionResult GetUser(int id)
         {
+            db.Configuration.ProxyCreationEnabled = false;
             User user = db.Users.Find(id);
             if (user == null)
             {
@@ -100,6 +112,7 @@ namespace Ecomerce.Controllers.API
         [ResponseType(typeof(void))]
         public IHttpActionResult PutUser(int id, User user)
         {
+            db.Configuration.ProxyCreationEnabled = false;
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -135,6 +148,7 @@ namespace Ecomerce.Controllers.API
         [ResponseType(typeof(User))]
         public IHttpActionResult PostUser(User user)
         {
+            db.Configuration.ProxyCreationEnabled = false;
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -150,6 +164,7 @@ namespace Ecomerce.Controllers.API
         [ResponseType(typeof(User))]
         public IHttpActionResult DeleteUser(int id)
         {
+            db.Configuration.ProxyCreationEnabled = false;
             User user = db.Users.Find(id);
             if (user == null)
             {
