@@ -26,7 +26,7 @@ namespace Ecomerce.Controllers.API
         [Route("Login")]
         public IHttpActionResult Longin(JObject form)
         {
-            db.Configuration.ProxyCreationEnabled = false;
+           // db.Configuration.ProxyCreationEnabled = false;
             string email = string.Empty;
             string password = string.Empty;
             dynamic jsonObject = form;
@@ -50,7 +50,7 @@ namespace Ecomerce.Controllers.API
                 return this.BadRequest("User or password wrong");
             }
 
-            var user = db.Users.Where(u => u.UserName == email)
+            var user = db.Users.Where(u => u.UserName.ToLower() == email.ToLower())
                 .Include(u => u.City)
                 .Include(u => u.Department)
                 .Include(u => u.Company).FirstOrDefault();
@@ -90,7 +90,7 @@ namespace Ecomerce.Controllers.API
         // GET: api/Users
         public IQueryable<User> GetUsers()
         {
-            db.Configuration.ProxyCreationEnabled = false;
+           // db.Configuration.ProxyCreationEnabled = false;
             return db.Users;
         }
 

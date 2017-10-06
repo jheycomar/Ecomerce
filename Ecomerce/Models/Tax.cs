@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -29,9 +30,9 @@ namespace Ecomerce.Models
         [Index("Tax_CompanyId_Description_Index", 1, IsUnique = true)]
         [Display(Name = "Company")]
         public int CompanyId { get; set; }
-
+        [JsonIgnore]
         public virtual Company Company { get; set; }
-
+        [JsonIgnore]
         public virtual ICollection<Product> Products { get; set; }
     }
 }

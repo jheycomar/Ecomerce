@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Web;
@@ -67,11 +68,11 @@ namespace Ecomerce.Models
 
         [NotMapped]
         public HttpPostedFileBase PhotoFile { get; set; }
-
+        [JsonIgnore]
         public virtual Department Department { get; set; }
-
+        [JsonIgnore]
         public virtual City City { get; set; }
-
+        [JsonIgnore]
         public virtual Company Company { get; set; }
     }
 }

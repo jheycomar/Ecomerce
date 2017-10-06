@@ -221,8 +221,10 @@
     <Compile Include="Class\FilesHelper.cs" />
     <Compile Include="Class\MailHelper.cs" />
     <Compile Include="Class\MovementsHelper.cs" />
+    <Compile Include="Class\ProductResponse.cs" />
     <Compile Include="Class\UserResponse.cs" />
     <Compile Include="Class\UsersHelper.cs" />
+    <Compile Include="Controllers\API\ProductsController.cs" />
     <Compile Include="Controllers\API\UsersController.cs" />
     <Compile Include="Controllers\MVC\AccountController.cs" />
     <Compile Include="Controllers\MVC\CategoriesController.cs" />

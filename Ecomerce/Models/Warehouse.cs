@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -47,13 +48,13 @@ namespace Ecomerce.Models
         [Range(1, Double.MaxValue, ErrorMessage = "You must select a {0}")]
         [Display(Name = "City")]
         public int CityId { get; set; }
-
+        [JsonIgnore]
         public virtual Department Department { get; set; }
-
+        [JsonIgnore]
         public virtual City City { get; set; }
-
+        [JsonIgnore]
         public virtual Company Company { get; set; }
-
+        [JsonIgnore]
         public virtual ICollection< Inventory >Inventories { get; set; }
 
 

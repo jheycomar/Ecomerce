@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -11,9 +12,6 @@ namespace Ecomerce.Models
     {
         [Key]
         public int CustomerId { get; set; }
-
-        
-
         [Required(ErrorMessage = "The field {0} is required")]
         [MaxLength(256, ErrorMessage = "The filed {0} must be maximun {1} characters length")]
         [Display(Name = "E-Mail")]
@@ -51,11 +49,13 @@ namespace Ecomerce.Models
 
         [Display(Name = "Customer")]
         public string FullName { get { return string.Format("{0} {1}", FirstName, LastName); } }
-
+        [JsonIgnore]
         public virtual Department Department { get; set; }
-
+        [JsonIgnore]
         public virtual City City { get; set; }
+        [JsonIgnore]
         public virtual ICollection <Order> Orders { get; set; }
+        [JsonIgnore]
         public virtual ICollection<CompanyCustomer> CompanyCustomers { get; set; }
 
     }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -32,11 +33,13 @@ namespace Ecomerce.Models
 
         [DataType(DataType.MultilineText)]
         public string Remarks { get; set; }
-
+        [JsonIgnore]
         public virtual Customer Customer { get; set; }
-
+        [JsonIgnore]
         public virtual State State { get; set; }
+        [JsonIgnore]
         public virtual Company Company { get; set; }
+        [JsonIgnore]
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
 
     }

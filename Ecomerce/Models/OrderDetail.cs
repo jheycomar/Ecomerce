@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -38,9 +39,9 @@ namespace Ecomerce.Models
         [Range(0, double.MaxValue, ErrorMessage = "You must enter values in {0} between {1} and {2}")]
 
         public double Quantity { get; set; }
-
+        [JsonIgnore]
         public virtual Order Order { get; set; }
-
+        [JsonIgnore]
         public virtual Product Product { get; set; }
 
     }
