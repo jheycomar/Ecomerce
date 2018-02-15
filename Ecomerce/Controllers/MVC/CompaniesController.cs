@@ -56,7 +56,6 @@ namespace Ecomerce.Controllers
             if (ModelState.IsValid)
              {                
                  db.Companies.Add(company);
-                 db.SaveChanges();
                  var respons = DBHelper.SaveChanges(db);
 
                  if (!respons.Succeded)

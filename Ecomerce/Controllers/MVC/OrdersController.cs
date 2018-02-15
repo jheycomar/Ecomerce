@@ -55,7 +55,7 @@ namespace Ecomerce.Controllers
                         Price = product.Price,
                         ProductId = product.ProductId,
                         Quantity = view.Quantity,
-                        TaxRate = product.Tax.Rate,
+                        TaxRate =product.Tax.Rate,
                         UserName = User.Identity.Name
                     };
 

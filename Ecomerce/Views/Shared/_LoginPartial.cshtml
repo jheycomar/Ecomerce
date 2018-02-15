@@ -9,8 +9,9 @@
         <li>
             @if (Session["Logo"] != null)
             {
-                <img src="@Url.Content(Session["Logo"].ToString())" alt="Image" style="width:50px;height:50px;max-width: 100%; height: auto; padding-top: 5px" />
+                <img src="@Url.Content(Session["Logo"].ToString())"  class="img-circle" alt="Image" style="width:50px;height:55px;max-width: 100%;max-height: 100%; padding-top: 5px;padding-bottom:5px" />
             }
+
         </li>
          <li>
             @Html.ActionLink("Hola " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
@@ -22,7 +23,11 @@
 else
 {
     <ul class="nav navbar-nav navbar-right">
-        <li>@Html.ActionLink("Registrarse", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
-        <li>@Html.ActionLink("Iniciar sesión", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+        @*<li>@Html.ActionLink(" Registrarse", "Register", "Account", routeValues: null, htmlAttributes: new { @class = "glyphicon glyphicon-user",id = " registerLink" })</li>
+        <li>@Html.ActionLink(" Iniciar sesión", "Login", "Account", routeValues: null, htmlAttributes: new { @class = "glyphicon glyphicon-log-in", id = "loginLink" }) </li>*@
+       
+        
+        <li><a href="/Account/Register"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+        <li><a href="/Account/Login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
     </ul>
 }

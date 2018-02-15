@@ -19,7 +19,7 @@
 
 </head>
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar  navbar-inverse navbar-fixed-top ">
 
         <div class="container">
 
@@ -32,11 +32,16 @@
                 @Html.ActionLink("E-Commerce", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
             </div>
 
-            <div class="navbar-collapse collapse">
+            <div class="navbar-collapse collapse" >
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("Inicio", "Index", "Home")</li>
                     <li>@Html.ActionLink("Acerca de", "About", "Home")</li>
                     <li>@Html.ActionLink("Contacto", "Contact", "Home")</li>
+
+                    
+                      
+                   
+
                     @if (User.IsInRole("Admin"))
                     {
                         <li class="dropdown">
@@ -54,17 +59,17 @@
                    @if (User.IsInRole("User"))
                    {
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">User<b class="caret"></b></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Usuario<b class="caret"></b></a>
                             <ul class="dropdown-menu">
-                                <li>@Html.ActionLink("Categories", "Index", "Categories")</li>
-                                <li>@Html.ActionLink("Customers", "Index", "Customers")</li>
-                                <li>@Html.ActionLink("Products", "Index", "Products")</li>
-                                <li>@Html.ActionLink("Taxes", "Index", "Taxes")</li>
-                                <li>@Html.ActionLink("Warehouses", "Index", "Warehouses")</li>
+                                <li>@Html.ActionLink("Categorías", "Index", "Categories")</li>
+                                <li>@Html.ActionLink("Clientes", "Index", "Customers")</li>
+                                <li>@Html.ActionLink("Productos", "Index", "Products")</li>
+                                <li>@Html.ActionLink("Impuestos", "Index", "Taxes")</li>
+                                <li>@Html.ActionLink("Almacenes", "Index", "Warehouses")</li>
                             </ul>
                         </li>
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Movements<b class="caret"></b></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Movimientos<b class="caret"></b></a>
                             <ul class="dropdown-menu">
                                 <li>@Html.ActionLink("Orders", "Index", "Orders")</li>
                                
@@ -82,7 +87,7 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - By Lsoft</p>
+            <p>&copy; @DateTime.Now.Year - By InfoLopsa</p>
         </footer>
     </div>
 

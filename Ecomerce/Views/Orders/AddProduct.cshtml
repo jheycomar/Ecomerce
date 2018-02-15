@@ -12,7 +12,7 @@
        
 
         <div class="form-group">
-            @Html.LabelFor(model => model.ProductId, "Department", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.ProductId, "Product", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.DropDownList("ProductId", null, ((IList<System.Web.Mvc.ModelMetadata>)ViewData.ModelMetadata.Properties)[0].Watermark, htmlAttributes: new { @class = "form-control", @required = "true" })
                 @Html.ValidationMessageFor(model => model.ProductId, "", new { @class = "text-danger" })

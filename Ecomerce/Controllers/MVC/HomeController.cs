@@ -10,10 +10,15 @@ namespace Ecomerce.Controllers
     public class HomeController : Controller
     {
         private EcomerceDataContext db = new EcomerceDataContext();
+        // GET: Products
         public ActionResult Index()
         {
             var user = db.Users.Where(u => u.UserName == User.Identity.Name).FirstOrDefault();
-            return View(user);
+            var products = db.Products ;
+         // return View(products.ToList());
+        
+        
+           return View(user);
         }
 
         public ActionResult About()

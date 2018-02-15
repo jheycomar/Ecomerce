@@ -46,16 +46,6 @@ namespace Ecomerce.Controllers.API
 
             return Ok(list);
         }
-        
-
-        //public IQueryable<Product> GetProducts()
-        //{
-        //    db.Configuration.ProxyCreationEnabled = false;
-        //    return db.Products;
-
-        //}
-
-       
             
         // GET: api/Products/5
         [ResponseType(typeof(Product))]
